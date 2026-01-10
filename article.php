@@ -4,7 +4,11 @@
         <i class="bi bi-plus-lg"></i> Tambah Article
     </button>
     <div class="row">
-        <div class="table-responsive" id="article_data">    
+        <div class="table-responsive" id="article_data">
+            
+        </div>
+    </div>
+</div>
 <!-- Awal Modal Tambah-->
 <div class="modal fade" id="modalTambah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -36,7 +40,7 @@
         </div>
     </div>
 </div>
-</div>
+<!-- Akhir Modal Tambah-->
 
 <script>
 $(document).ready(function(){
@@ -53,15 +57,12 @@ $(document).ready(function(){
             }
         })
     } 
-
     $(document).on('click', '.halaman', function(){
     var hlm = $(this).attr("id");
     load_data(hlm);
-});
+    });
 });
 </script>
-
-<!-- Akhir Modal Tambah-->
 
 <?php
 include "upload_foto.php";

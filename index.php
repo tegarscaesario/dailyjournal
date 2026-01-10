@@ -7,7 +7,7 @@ include "koneksi.php";
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Blog | Tegar Scaesario</title>
-    <link rel="icon" href="icon.jpg">
+    <link rel="icon" href="img/icon.jpg">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
@@ -66,7 +66,7 @@ include "koneksi.php";
     <section id="hero" class="text-center p-5 bg-secondary-subtle text-sm-start">
         <div class="container">
             <div class="d-sm-flex flex-sm-row-reverse align-items-center">
-                <img src="gambar1.jpg" class="img-fluid" width="300" alt="Gambar">
+                <img src="img/gambar1.jpg" class="img-fluid" width="300" alt="Gambar">
                 <div>
                     <h1 class="fw-bold display-4">Lorem ipsum dolor sit, amet consectetur adipisicing..</h1>
                     <h4 class="lead display-6">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minus, vel.</h4>
@@ -83,7 +83,7 @@ include "koneksi.php";
     <!-- article begin -->
 <section id="article" class="text-center p-5">
   <div class="container">
-    <h1 class="fw-bold display-4 pb-3">article</h1>
+    <h1 class="fw-bold display-4 pb-3">Article</h1>
     <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
       <?php
       $sql = "SELECT * FROM article ORDER BY tanggal DESC";
@@ -116,39 +116,44 @@ include "koneksi.php";
 <!-- article end -->
 
     <!-- gallery begin -->
-    <section id="gallery" class="text-center p-5 bg-secondary-subtle">
-        <div class="container">
-            <h1 class="fw-bold display-4 pb-3">Gallery</h1>
-            <div id="carouselExample" class="carousel slide">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img src="galeri1.jpg" class="d-block w-100" alt="galeri1">
+<section id="gallery" class="text-center p-5 bg-secondary-subtle">
+    <div class="container">
+        <h1 class="fw-bold display-4 pb-3">Gallery</h1>
+
+        <?php
+        $sql = "SELECT * FROM gallery ORDER BY tanggal DESC";
+        $hasil = $conn->query($sql);
+
+        $active = true;
+        ?>
+
+        <div id="carouselGallery" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+
+                <?php while ($row = $hasil->fetch_assoc()) { ?>
+                    <div class="carousel-item <?= $active ? 'active' : '' ?>">
+                        <img src="img/<?= $row['gambar'] ?>" 
+                             class="d-block w-100"
+                             alt="gallery">
                     </div>
-                    <div class="carousel-item">
-                        <img src="galeri2.jpg" class="d-block w-100" alt="galeri2">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="galeri3.jpg" class="d-block w-100" alt="galeri3">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="galeri4.jpg" class="d-block w-100" alt="galeri4">
-                    </div>
-                    <div class="carousel-item">
-                        <img src="galeri5.jpg" class="d-block w-100" alt="galeri5">
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+                <?php 
+                    $active = false;
+                } ?>
+
             </div>
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselGallery" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+            </button>
+
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselGallery" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+            </button>
         </div>
-    </section>
-    <!-- gallery end -->
+    </div>
+</section>
+<!-- gallery end -->
+
 
     <!-- schedule begin -->
     <section id="schedule" class="text-center p-5">
@@ -303,7 +308,7 @@ include "koneksi.php";
                             <div class="row align-items-center">
                                 <!-- Photo Section -->
                                 <div class="col-md-4 text-center mb-4 mb-md-0">
-                                    <img src="Foto_profile.jpeg" alt="Profile Photo" class="rounded-circle" width="200" height="200">
+                                    <img src="img/Foto_profile.jpeg" alt="Profile Photo" class="rounded-circle" width="200" height="200">
                                 </div>
                                 
                                 <!-- Info Section -->

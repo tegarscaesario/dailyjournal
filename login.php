@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
     />
-    <link rel="icon" href="icon.jpg" />
+    <link rel="icon" href="img/icon.jpg" />
   </head>
   <body class="bg-secondary-subtle">
     <div class="container mt-5 pt-5">
