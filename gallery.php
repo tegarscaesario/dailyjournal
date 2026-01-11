@@ -20,7 +20,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="formGroupExampleInput2" class="form-label">Gambar</label>
-                        <input type="file" class="form-control" name="gambar">
+                        <input type="file" class="form-control" name="gambar" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -31,6 +31,7 @@
         </div>
     </div>
 </div>
+
 <script>
 $(document).ready(function(){
     load_data();
@@ -47,9 +48,9 @@ $(document).ready(function(){
         })
     } 
     $(document).on('click', '.halaman', function(){
-    var hlm = $(this).attr("id");
-    load_data(hlm);
-});
+        var hlm = $(this).attr("id");
+        load_data(hlm);
+    });
 });
 </script>
 
@@ -58,12 +59,20 @@ include "upload_foto.php";
 
 //jika tombol simpan diklik
 if (isset($_POST['simpan'])) {
-    $judul = $_POST['judul'];
-    $isi = $_POST['isi'];
+    // PERBAIKAN: Hapus variabel yang tidak ada di form gallery
     $tanggal = date("Y-m-d H:i:s");
     $username = $_SESSION['username'];
     $gambar = '';
     $nama_gambar = $_FILES['gambar']['name'];
+
+    //VALIDASI: Pastikan file gambar diupload
+    if ($nama_gambar == '') {
+        echo "<script>
+            alert('Harap pilih gambar terlebih dahulu!');
+            document.location='admin.php?page=gallery';
+        </script>";
+        die;
+    }
 
     //jika ada file yang dikirim  
     if ($nama_gambar != '') {
@@ -81,12 +90,16 @@ if (isset($_POST['simpan'])) {
     }
 
     if (isset($_POST['id'])) {
+        // UPDATE DATA
         $id = $_POST['id'];
 
         if ($nama_gambar == '') {
             $gambar = $_POST['gambar_lama'];
         } else {
-            unlink("img/" . $_POST['gambar_lama']);
+            // Hapus gambar lama jika ada
+            if (file_exists("img/" . $_POST['gambar_lama'])) {
+                unlink("img/" . $_POST['gambar_lama']);
+            }
         }
 
         $stmt = $conn->prepare("UPDATE gallery 
@@ -96,13 +109,17 @@ if (isset($_POST['simpan'])) {
                                 username = ?
                                 WHERE id = ?");
 
-        $stmt->bind_param("sssssi", $gambar, $tanggal, $username, $id);
+        // PERBAIKAN: 3 string + 1 integer = "sssi" (bukan "sssssi")
+        $stmt->bind_param("sssi", $gambar, $tanggal, $username, $id);
         $simpan = $stmt->execute();
+        
     } else {
-        $stmt = $conn->prepare("INSERT INTO gallery (gambar,tanggal,username)
-                                VALUES (?,?,?)");
+        // INSERT DATA BARU
+        $stmt = $conn->prepare("INSERT INTO gallery (gambar, tanggal, username)
+                                VALUES (?, ?, ?)");
 
-        $stmt->bind_param("sssss",$gambar, $tanggal, $username);
+        // PERBAIKAN: 3 parameter = "sss" (bukan "sssss")
+        $stmt->bind_param("sss", $gambar, $tanggal, $username);
         $simpan = $stmt->execute();
     }
 
@@ -113,7 +130,7 @@ if (isset($_POST['simpan'])) {
         </script>";
     } else {
         echo "<script>
-            alert('Simpan data gagal');
+            alert('Simpan data gagal: " . $stmt->error . "');
             document.location='admin.php?page=gallery';
         </script>";
     }
@@ -127,12 +144,11 @@ if (isset($_POST['hapus'])) {
     $id = $_POST['id'];
     $gambar = $_POST['gambar'];
 
-    if ($gambar != '') {
+    if ($gambar != '' && file_exists("img/" . $gambar)) {
         unlink("img/" . $gambar);
     }
 
-    $stmt = $conn->prepare("DELETE FROM gallery WHERE id =?");
-
+    $stmt = $conn->prepare("DELETE FROM gallery WHERE id = ?");
     $stmt->bind_param("i", $id);
     $hapus = $stmt->execute();
 
@@ -143,7 +159,7 @@ if (isset($_POST['hapus'])) {
         </script>";
     } else {
         echo "<script>
-            alert('Hapus data gagal');
+            alert('Hapus data gagal: " . $stmt->error . "');
             document.location='admin.php?page=gallery';
         </script>";
     }

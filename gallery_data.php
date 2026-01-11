@@ -19,16 +19,16 @@
     $sql = "SELECT * FROM gallery ORDER BY tanggal DESC LIMIT $limit_start, $limit";
     $hasil = $conn->query($sql);
 
-    while ($row = $hasil->fetch_assoc()) {
+    if ($hasil->num_rows > 0) {
+        while ($row = $hasil->fetch_assoc()) {
     ?>
         <tr>
             <td><?= $no++ ?></td>
 
             <!-- KETERANGAN -->
             <td>
-                <strong><?= $row["judul"] ?></strong><br>
-                pada : <?= $row["tanggal"] ?><br>
-                oleh : <?= $row["username"] ?>
+                Tanggal: <?= date('d M Y H:i', strtotime($row["tanggal"])) ?><br>
+                Oleh: <strong><?= $row["username"] ?></strong>
             </td>
 
             <!-- GAMBAR -->
@@ -36,7 +36,7 @@
                 <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
                     <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
                 <?php } else { ?>
-                    <span class="text-muted">Tidak ada</span>
+                    <span class="text-muted">Tidak ada gambar</span>
                 <?php } ?>
             </td>
 
@@ -61,25 +61,28 @@
         </tr>
 
         <!-- MODAL EDIT -->
-        <div class="modal fade" id="modalEdit<?= $row["id"] ?>" tabindex="-1">
+        <div class="modal fade" id="modalEdit<?= $row["id"] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Gallery</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post" action="" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label class="form-label">Ganti Gambar</label>
-                                <input type="file" name="gambar" class="form-control">
+                                <label class="form-label">Gambar Saat Ini</label><br>
+                                <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
+                                    <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
+                                <?php } else { ?>
+                                    <p class="text-muted">Tidak ada gambar</p>
+                                <?php } ?>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Gambar Lama</label><br>
-                                <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
-                                    <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
-                                <?php } ?>
+                                <label class="form-label">Ganti Gambar</label>
+                                <input type="file" name="gambar" class="form-control">
+                                <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar</small>
                                 <input type="hidden" name="gambar_lama" value="<?= $row["gambar"] ?>">
                                 <input type="hidden" name="id" value="<?= $row["id"] ?>">
                             </div>
@@ -94,16 +97,19 @@
         </div>
 
         <!-- MODAL HAPUS -->
-        <div class="modal fade" id="modalHapus<?= $row["id"] ?>" tabindex="-1">
+        <div class="modal fade" id="modalHapus<?= $row["id"] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Konfirmasi Hapus</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form method="post">
+                    <form method="post" action="">
                         <div class="modal-body">
-                            Yakin hapus "<strong><?= $row["judul"] ?></strong>"?
+                            <p>Yakin ingin menghapus gambar ini?</p>
+                            <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
+                                <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
+                            <?php } ?>
                             <input type="hidden" name="id" value="<?= $row["id"] ?>">
                             <input type="hidden" name="gambar" value="<?= $row["gambar"] ?>">
                         </div>
@@ -116,7 +122,16 @@
             </div>
         </div>
 
-    <?php } ?>
+    <?php 
+        }
+    } else {
+    ?>
+        <tr>
+            <td colspan="4" class="text-center text-muted">Belum ada data gallery</td>
+        </tr>
+    <?php
+    }
+    ?>
     </tbody>
 </table>
 
@@ -126,28 +141,30 @@ $hasil1 = $conn->query($sql1);
 $total_records = $hasil1->num_rows;
 ?>
 
-<p>Total gallery : <?= $total_records ?></p>
+<p>Total gallery: <?= $total_records ?></p>
 
 <nav>
 <ul class="pagination justify-content-end">
 <?php
 $jumlah_page = ceil($total_records / $limit);
 
-if ($hlm > 1) {
-    echo '<li class="page-item halaman" id="1"><a class="page-link">First</a></li>';
-    echo '<li class="page-item halaman" id="'.($hlm-1).'"><a class="page-link">&laquo;</a></li>';
-}
+if ($jumlah_page > 1) {
+    if ($hlm > 1) {
+        echo '<li class="page-item halaman" id="1"><a class="page-link" href="#">First</a></li>';
+        echo '<li class="page-item halaman" id="'.($hlm-1).'"><a class="page-link" href="#">&laquo;</a></li>';
+    }
 
-for ($i = 1; $i <= $jumlah_page; $i++) {
-    $active = ($hlm == $i) ? 'active' : '';
-    echo '<li class="page-item halaman '.$active.'" id="'.$i.'">
-            <a class="page-link">'.$i.'</a>
-          </li>';
-}
+    for ($i = 1; $i <= $jumlah_page; $i++) {
+        $active = ($hlm == $i) ? 'active' : '';
+        echo '<li class="page-item halaman '.$active.'" id="'.$i.'">
+                <a class="page-link" href="#">'.$i.'</a>
+              </li>';
+    }
 
-if ($hlm < $jumlah_page) {
-    echo '<li class="page-item halaman" id="'.($hlm+1).'"><a class="page-link">&raquo;</a></li>';
-    echo '<li class="page-item halaman" id="'.$jumlah_page.'"><a class="page-link">Last</a></li>';
+    if ($hlm < $jumlah_page) {
+        echo '<li class="page-item halaman" id="'.($hlm+1).'"><a class="page-link" href="#">&raquo;</a></li>';
+        echo '<li class="page-item halaman" id="'.$jumlah_page.'"><a class="page-link" href="#">Last</a></li>';
+    }
 }
 ?>
 </ul>
