@@ -57,70 +57,70 @@
                         <i class="bi bi-x-circle"></i>
                     </a>
                 </div>
+
+                <!-- MODAL EDIT -->
+                <div class="modal fade" id="modalEdit<?= $row["id"] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Edit Gallery</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form method="post" action="" enctype="multipart/form-data">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Gambar Saat Ini</label><br>
+                                        <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
+                                            <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
+                                        <?php } else { ?>
+                                            <p class="text-muted">Tidak ada gambar</p>
+                                        <?php } ?>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Ganti Gambar</label>
+                                        <input type="file" name="gambar" class="form-control">
+                                        <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar</small>
+                                        <input type="hidden" name="gambar_lama" value="<?= $row["gambar"] ?>">
+                                        <input type="hidden" name="id" value="<?= $row["id"] ?>">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODAL HAPUS -->
+                <div class="modal fade" id="modalHapus<?= $row["id"] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Konfirmasi Hapus</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form method="post" action="">
+                                <div class="modal-body">
+                                    <p>Yakin ingin menghapus gambar ini?</p>
+                                    <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
+                                        <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
+                                    <?php } ?>
+                                    <input type="hidden" name="id" value="<?= $row["id"] ?>">
+                                    <input type="hidden" name="gambar" value="<?= $row["gambar"] ?>">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    <button type="submit" name="hapus" class="btn btn-danger">Hapus</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </td>
         </tr>
-
-        <!-- MODAL EDIT -->
-        <div class="modal fade" id="modalEdit<?= $row["id"] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Gallery</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form method="post" action="" enctype="multipart/form-data">
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label class="form-label">Gambar Saat Ini</label><br>
-                                <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
-                                    <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
-                                <?php } else { ?>
-                                    <p class="text-muted">Tidak ada gambar</p>
-                                <?php } ?>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Ganti Gambar</label>
-                                <input type="file" name="gambar" class="form-control">
-                                <small class="text-muted">Kosongkan jika tidak ingin mengganti gambar</small>
-                                <input type="hidden" name="gambar_lama" value="<?= $row["gambar"] ?>">
-                                <input type="hidden" name="id" value="<?= $row["id"] ?>">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" name="simpan" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL HAPUS -->
-        <div class="modal fade" id="modalHapus<?= $row["id"] ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Konfirmasi Hapus</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <form method="post" action="">
-                        <div class="modal-body">
-                            <p>Yakin ingin menghapus gambar ini?</p>
-                            <?php if ($row["gambar"] != '' && file_exists('img/'.$row["gambar"])) { ?>
-                                <img src="img/<?= $row["gambar"] ?>" class="img-thumbnail w-50">
-                            <?php } ?>
-                            <input type="hidden" name="id" value="<?= $row["id"] ?>">
-                            <input type="hidden" name="gambar" value="<?= $row["gambar"] ?>">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" name="hapus" class="btn btn-danger">Hapus</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 
     <?php 
         }
